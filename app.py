@@ -1,3 +1,6 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"   # silence TensorFlow logs
+
 import streamlit as st
 import cv2
 import numpy as np
@@ -8,12 +11,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+import streamlit as st
+from tensorflow.keras.models import load_model
+
+@st.cache_resource(show_spinner=False)
+def load_emotion_model():
+    model = load_model("face_emotion_model.h5", compile=False)
+    return model
+
 # Load the model
 @st.cache_resource
 def load_emotion_model():
     return load_model("face_emotion_model.h5")
 
-model = load_emotion_model()
+if "emotion_model" not in st.session_state:
+    with st.spinner("Loading emotion model..."):
+        st.session_state.emotion_model = load_emotion_model()
+
+model = st.session_state.emotion_model
+
 
 # Emotion labels and emojis
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
