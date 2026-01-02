@@ -1,1 +1,5 @@
 data/FER-2013/fer2013.csv
+data/
+git-filter-repo/
+__pycache__/
+*.pyc
